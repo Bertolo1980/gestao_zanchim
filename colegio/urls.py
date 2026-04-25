@@ -53,6 +53,7 @@ urlpatterns = [
 
      # ===== BUSCA ATIVA =====
     path('busca-ativa/', views.busca_ativa, name='busca_ativa'),
+    path('menu-teste/', views.busca_ativa, name='menu_teste'),
     path('marcar-busca-ativa/<int:pk>/', views.marcar_busca_ativa, name='marcar_busca_ativa'),
     path('marcar-todos-busca-ativa/', views.marcar_todos_busca_ativa, name='marcar_todos_busca_ativa'),
 
