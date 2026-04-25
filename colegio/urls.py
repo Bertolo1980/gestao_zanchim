@@ -6,7 +6,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView  # <-- IMPORTANTE: coloque aqui no topo
-from django.views.generic import TemplateView
+from django.shortcuts import render
 from apps import views
 
 urlpatterns = [
@@ -54,7 +54,7 @@ urlpatterns = [
 
      # ===== BUSCA ATIVA =====
     path('busca-ativa/', views.busca_ativa, name='busca_ativa'),
-    path('teste/', TemplateView.as_view(template_name='menu_teste.html'), name='menu_teste'),
+    path('teste/', lambda request: render(request, 'menu_teste.html'), name='menu_teste'),
     path('marcar-busca-ativa/<int:pk>/', views.marcar_busca_ativa, name='marcar_busca_ativa'),
     path('marcar-todos-busca-ativa/', views.marcar_todos_busca_ativa, name='marcar_todos_busca_ativa'),
 
