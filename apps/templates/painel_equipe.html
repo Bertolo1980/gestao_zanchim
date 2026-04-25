@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel da Equipe - Colégio Cívico Militar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        .sidebar a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            display: block;
+            padding: 15px 20px;
+            transition: 0.3s;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding-left: 30px;
+        }
+        .sidebar i {
+            margin-right: 10px;
+            width: 25px;
+            text-align: center;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .content-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .page-header {
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-info {
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- MENU LATERAL -->
+            <div class="col-md-2 p-0 sidebar">
+                <div class="p-4">
+                    <h4 class="text-center mb-4">
+                        <i class="fas fa-shield-alt"></i> Painel da Equipe
+                    </h4>
+                    <hr style="border-color: rgba(255,255,255,0.2);">
+                </div>
+                <nav>
+                    <!-- CONTEÚDO PÚBLICO -->
+                <div class="menu-secao">
+                    <div style="background-color: #17a2b8; color: white; padding: 10px; border-radius: 5px; margin: 10px 0; text-align: center; font-weight: bold;">
+                        📢 CONTEÚDO PÚBLICO
+                    </div>
+
+                    <!-- BOTÃO IR PARA SITE DOS PROFESSORES -->
+                    <a href="{% url 'home' %}" target="_blank"
+                       style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #28a745; background: rgba(255,255,255,0.1); border-radius: 5px; margin-bottom: 15px;">
+                        <i class="fas fa-globe" style="color: #28a745; margin-right: 10px; width: 25px; text-align: center;"></i>
+                        🌐 Ir para o Site dos Professores
+                    </a>
+
+                    <!-- LINKS EXISTENTES -->
+                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/recado/" target="_blank">
+                        <i class="fas fa-bullhorn"></i> Recados Públicos
+                    </a>
+                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/documento/" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Documentos Públicos
+                    </a>
+                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/evento/" target="_blank">
+                        <i class="fas fa-calendar-alt"></i> Eventos Públicos
+                    </a>
+                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/video/" target="_blank">
+                        <i class="fas fa-video"></i> Vídeos Públicos
+                    </a>
+                </div>
+
+                    <!-- CONTEÚDO PRIVADO -->
+                    <div class="menu-secao">
+                        <div style="background-color: #dc3545; color: white; padding: 10px; border-radius: 5px; margin: 10px 0; text-align: center; font-weight: bold;">
+                            🔒 CONTEÚDO PRIVADO
+                        </div>
+                        <a href="{% url 'lista_recados_internos' %}">
+                            <i class="fas fa-comments"></i> Recados Internos
+                        </a>
+                        <a href="{% url 'lista_documentos_privados' %}">
+                            <i class="fas fa-file-pdf"></i> Documentos Privados
+                        </a>
+                        <a href="{% url 'lista_eventos_privados' %}">
+                            <i class="fas fa-calendar-check"></i> Eventos Privados
+                        </a>
+                    </div>
+
+                   <!-- GESTÃO -->
+                    <div class="menu-secao">
+                        <div style="background-color: #28a745; color: white; padding: 10px; border-radius: 5px; margin: 10px 0; text-align: center; font-weight: bold;">
+                            ⚙️ GESTÃO
+                        </div>
+
+                        <a href="{% url 'listar_laboratorios' %}"
+                            style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #17a2b8; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-laptop" style="color: #17a2b8; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            🖥️ Laboratórios
+                        </a>
+
+                        <!-- Controle de Faltas - Professores -->
+                        <a href="/controle-faltas/">
+                            <i class="fas fa-user-clock"></i> Controle de Faltas - Professores
+                        </a>
+
+                        <!-- Controle de Faltas - Alunos -->
+                        <a href="/faltas-alunos/"
+                            style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #ffc107; margin-top: 5px; background: rgba(255,255,255,0.1); border-radius: 5px;">
+                            <i class="fas fa-user-graduate" style="color: #ffc107; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Controle de Faltas - Alunos
+                        </a>
+
+                    <!-- NOVO: Busca Ativa -->
+                        <a href="{% url 'busca_ativa' %}"
+                           style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #28a745; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-magnifying-glass" style="color: #28a745; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Busca Ativa
+                        </a>
+                    <!-- NOVOS LINKS -->
+                        <a href="{% url 'cadastrar_professor' %}" style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #007bff; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-chalkboard-user"></i> Cadastrar Professor
+                        </a>
+
+                        <a href="{% url 'listar_professores' %}" style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #007bff; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-list"></i> Listar Professores
+                        </a>
+
+                        <a href="{% url 'cadastrar_aluno' %}" style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #28a745; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-user-plus"></i> Cadastrar Aluno
+                        </a>
+
+                        <a href="{% url 'listar_alunos' %}" style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #28a745; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-users"></i> Listar Alunos
+                        </a>
+                    </div>
+
+                    <!-- RELATÓRIOS -->
+                    <div class="menu-secao">
+                        <div style="background-color: #17a2b8; color: white; padding: 10px; border-radius: 5px; margin: 10px 0; text-align: center; font-weight: bold;">
+                            📊 RELATÓRIOS
+                        </div>
+
+                        <!-- Relatório de Faltas - Alunos (mensal) -->
+                        <a href="{% url 'relatorio_ocorrencias_alunos' %}?mes={{ mes_atual }}&ano={{ ano_atual }}"
+                           style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #17a2b8; background: rgba(255,255,255,0.1); border-radius: 5px;">
+                            <i class="fas fa-file-excel" style="color: #17a2b8; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Relatório de Faltas - Alunos
+                        </a>
+
+                        <!-- Relatório Individual de Faltas -->
+                        <a href="{% url 'relatorio_faltas' %}"
+                           style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #17a2b8; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-print" style="color: #17a2b8; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Relatório Individual de Faltas
+                        </a>
+
+                        <!-- Relatório de Faltas por Aluno (agrupado) -->
+                        <a href="{% url 'relatorio_faltas_por_aluno' %}"
+                           style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #17a2b8; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-chart-bar" style="color: #17a2b8; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Relatório de Faltas por Aluno (agrupado)
+                        </a>
+
+                        <!-- Relatório por Tipo de Ocorrência (NOVO) -->
+                        <a href="{% url 'relatorio_filtro' %}"
+                           style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #17a2b8; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-filter" style="color: #17a2b8; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Relatório por Tipo de Ocorrência
+                        </a>
+
+                        <!-- Histórico de Acessos - visível apenas para superusuário -->
+                        {% if user.is_superuser %}
+                        <a href="{% url 'historico_acessos' %}"
+                           style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #17a2b8; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 5px;">
+                            <i class="fas fa-history" style="color: #17a2b8; margin-right: 10px; width: 25px; text-align: center;"></i>
+                            Histórico de Acessos
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- SAÍDA -->
+                    <div class="menu-secao">
+                        <a href="{% url 'home' %}" style="background-color: #6c757d; color: white; display: block; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: center;">
+                            <i class="fas fa-arrow-left"></i> Voltar ao Site
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- CONTEÚDO PRINCIPAL -->
+            <div class="col-md-10 main-content">
+                <div class="page-header">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Olá, {{ usuario.get_full_name|default:usuario.username }}!</h2>
+                    <span class="user-info">
+                        <i class="fas fa-user-circle me-2"></i> Equipe Diretiva
+                    </span>
+                </div>
+
+                <!-- ===== GRÁFICO DE FALTAS ===== -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5><i class="fas fa-chart-line me-2"></i>Faltas de Alunos - Percentual Diário</h5>
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-auto">
+                    <label class="form-label">Mês</label>
+                    <select name="mes" class="form-select">
+                        {% for m in meses %}
+                            <option value="{{ m }}" {% if m == mes %}selected{% endif %}>{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Ano</label>
+                    <select name="ano" class="form-select">
+                        {% for a in anos %}
+                            <option value="{{ a }}" {% if a == ano %}selected{% endif %}>{{ a }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto align-self-end">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+                <div class="col-auto align-self-end">
+                    <a href="?mes={{ mes_atual }}&ano={{ ano_atual }}" class="btn btn-secondary">Mês atual</a>
+                </div>
+            </form>
+
+            <p class="text-muted">
+                <i class="fas fa-users me-1"></i>
+                Total de alunos: <strong>Manhã: {{ total_manha }}</strong> |
+                <strong>Tarde: {{ total_tarde }}</strong>
+            </p>
+
+            <canvas id="graficoFaltas" width="800" height="400"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const ctx = document.getElementById('graficoFaltas').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {{ dias|safe }},
+                        datasets: [
+                            {
+                                label: '🌅 Manhã - % de faltas',
+                                data: {{ percentuais_manha|safe }},
+                                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                                borderColor: '#FF6384',
+                                borderWidth: 1
+                            },
+                            {
+                                label: '🌇 Tarde - % de faltas',
+                                data: {{ percentuais_tarde|safe }},
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                borderColor: '#36A2EB',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                title: { display: true, text: 'Percentual de faltas (%)' },
+                                 min: 0,
+                                 max: 70,
+                                ticks: { stepSize: 1 }
+                            },
+                            x: {
+                                title: { display: true, text: 'Dia do mês' }
+                            }
+                        }
+                    }
+                });
+            });
+            </script>
+        </div>
+    </div>
+
+                <!-- Ranking de Faltas por Turma -->
+<div class="content-card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-trophy me-2"></i>Ranking de Faltas por Turma</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-auto">
+                <label class="form-label">Mês</label>
+                <select name="mes_ranking" class="form-select">
+                    {% for m in meses %}
+                        <option value="{{ m }}" {% if m == mes_ranking %}selected{% endif %}>{{ m }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <label class="form-label">Ano</label>
+                <select name="ano_ranking" class="form-select">
+                    {% for a in anos %}
+                        <option value="{{ a }}" {% if a == ano_ranking %}selected{% endif %}>{{ a }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto align-self-end">
+                <button type="submit" name="atualizar_ranking" class="btn btn-primary">Atualizar</button>
+            </div>
+        </form>
+
+        <!-- Gráfico Manhã -->
+        <h6 class="mt-4"><i class="fas fa-sun text-warning me-2"></i>Período da Manhã</h6>
+        <canvas id="graficoRankingManha" width="800" height="300"></canvas>
+
+        <!-- Gráfico Tarde -->
+        <h6 class="mt-4"><i class="fas fa-moon text-info me-2"></i>Período da Tarde</h6>
+        <canvas id="graficoRankingTarde" width="800" height="300"></canvas>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico Manhã
+    const ctxManha = document.getElementById('graficoRankingManha').getContext('2d');
+    const turmasManha = {{ turmas_manha|safe }};
+    const totaisManha = {{ totais_manha|safe }};
+
+    if (turmasManha && turmasManha.length > 0) {
+        new Chart(ctxManha, {
+            type: 'bar',
+            data: {
+                labels: turmasManha,
+                datasets: [{
+                    label: 'Total de Faltas',
+                    data: totaisManha,
+                    backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Quantidade de Faltas' }, ticks: { stepSize: 1 } },
+                    x: { title: { display: true, text: 'Turma' } }
+                }
+            }
+        });
+    }
+
+    // Gráfico Tarde
+    const ctxTarde = document.getElementById('graficoRankingTarde').getContext('2d');
+    const turmasTarde = {{ turmas_tarde|safe }};
+    const totaisTarde = {{ totais_tarde|safe }};
+
+    if (turmasTarde && turmasTarde.length > 0) {
+        new Chart(ctxTarde, {
+            type: 'bar',
+            data: {
+                labels: turmasTarde,
+                datasets: [{
+                    label: 'Total de Faltas',
+                    data: totaisTarde,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Quantidade de Faltas' }, ticks: { stepSize: 1 } },
+                    x: { title: { display: true, text: 'Turma' } }
+                }
+            }
+        });
+    }
+});
+</script>
+
+                <!-- Relatório de Total de Faltas (colapsável) -->
+                <div class="content-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-simple text-primary me-2"></i>Relatório de Total de Faltas
+                        </h5>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRelatorio" aria-expanded="false" aria-controls="collapseRelatorio">
+                            <i class="fas fa-chevron-down"></i> Mostrar/Esconder
+                        </button>
+                    </div>
+                    <div class="collapse mt-3" id="collapseRelatorio">
+                        <div class="card card-body bg-light">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover">
+                                    <thead class="table-light">
+                                        <tr><th>Turma</th><th>Total de Faltas</th> </thead>
+                                    <tbody>
+                                        {% for turma, total in ranking_manha %}
+                                         <tr><td><strong>{{ turma }}</strong> (Manhã)</td><td><span class="badge bg-danger">{{ total }}</span></td></tr>
+                                        {% endfor %}
+                                        {% for turma, total in ranking_tarde %}
+                                         <tr><td><strong>{{ turma }}</strong> (Tarde)</td><td><span class="badge bg-danger">{{ total }}</span></td></tr>
+                                        {% empty %}
+                                         <tr><td colspan="2" class="text-center">Nenhuma falta registrada neste período.</td></tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-2 text-end">
+                                <small class="text-muted">Total de faltas no período:
+                                    <strong>{{ total_faltas_periodo }}</strong>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card de Consulta Rápida de Turmas -->
+                <div class="content-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-school text-primary me-2"></i>Turmas para digitar no formulário
+                        </h5>
+                        <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTurmas" aria-expanded="false" aria-controls="collapseTurmas">
+                            <i class="fas fa-chevron-down"></i> Mostrar/Esconder
+                        </button>
+                    </div>
+                    <div class="collapse mt-3" id="collapseTurmas">
+                        <div class="card card-body bg-light">
+                            <p class="mb-2">Use estas abreviações exatas no campo "Turma" do formulário de ocorrências:</p>
+                            <div class="row">
+                                {% for turma in turmas %}
+                                <div class="col-md-3 col-sm-4 col-6">
+                                    <span class="badge bg-secondary mb-1 p-2" style="font-size: 0.9rem;">{{ turma.nome }}</span>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted">Nenhuma turma cadastrada.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- fim main-content -->
+        </div> <!-- fim row -->
+    </div> <!-- fim container-fluid -->
+
+    <!-- MODAL DE UPLOAD DE DOCUMENTO -->
+    <div class="modal fade" id="modalUpload" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enviar Documento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_documento_privado' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título do Documento</label>
+                            <input type="text" name="titulo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Categoria</label>
+                            <input type="text" name="categoria" class="form-control" placeholder="Ex: Atas, Planejamento, Reuniões">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Arquivo</label>
+                            <input type="file" name="arquivo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição (opcional)</label>
+                            <textarea name="descricao" class="form-control" rows="2" placeholder="Breve descrição do documento"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Enviar Documento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE NOVO EVENTO -->
+    <div class="modal fade" id="modalEvento" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" action="{% url 'criar_evento_privado' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Título do Evento</label>
+                            <input type="text" name="titulo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea name="descricao" class="form-control" rows="2" placeholder="Detalhes do evento"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data Início</label>
+                                <input type="datetime-local" name="data_inicio" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Data Fim</label>
+                                <input type="datetime-local" name="data_fim" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Local</label>
+                            <input type="text" name="local" class="form-control" placeholder="Local do evento (opcional)">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Criar Evento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('graficoFaltas').getContext('2d');
+            const dias = {{ dias|safe }};
+            const percentuais = {{ percentuais|safe }};
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dias,
+                    datasets: [{
+                        label: '% de faltas',
+                        data: percentuais,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Percentual de faltas (%)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Dia do mês'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

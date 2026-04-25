@@ -1,0 +1,135 @@
+{% extends 'base_painel.html' %}
+{% block title %}Busca Ativa{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="fas fa-search me-2"></i>Busca Ativa - Ocorrências de Alunos</h4>
+        </div>
+        <div class="card-body">
+            <!-- Filtros -->
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-auto">
+                    <label class="form-label">Mês</label>
+                    <select name="mes" class="form-select">
+                        {% for m in meses %}
+                            <option value="{{ m }}" {% if m == mes %}selected{% endif %}>{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Ano</label>
+                    <select name="ano" class="form-select">
+                        {% for a in anos %}
+                            <option value="{{ a }}" {% if a == ano %}selected{% endif %}>{{ a }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Turma</label>
+                    <select name="turma" class="form-select">
+                        <option value="">Todas as turmas</option>
+                        {% for turma in turmas %}
+                            <option value="{{ turma.id }}" {% if turma.id|stringformat:"s" == turma_selecionada %}selected{% endif %}>{{ turma.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto align-self-end">
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </div>
+                <div class="col-auto align-self-end">
+                    <a href="{% url 'exportar_busca_ativa' %}?mes={{ mes }}&ano={{ ano }}&turma={{ turma_selecionada }}" class="btn btn-success">
+                        <i class="fas fa-file-excel me-2"></i>Exportar
+                    </a>
+                </div>
+            </form>
+
+            <!-- Resumo por turma -->
+            {% if turmas_resumo %}
+            <div class="alert alert-info mb-4">
+                <strong>📊 Resumo por turma:</strong><br>
+                {% for nome, dados in turmas_resumo.items %}
+                    <span class="badge bg-secondary ms-1 mt-1 p-2">
+                        {{ nome }}: {{ dados.realizadas }}/{{ dados.total }} realizadas
+                    </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Botão marcar todos -->
+            {% if ocorrencias %}
+            <form method="post" action="{% url 'marcar_todos_busca_ativa' %}" class="mb-3">
+                {% csrf_token %}
+                <input type="hidden" name="mes" value="{{ mes }}">
+                <input type="hidden" name="ano" value="{{ ano }}">
+                <input type="hidden" name="turma" value="{{ turma_selecionada }}">
+                <button type="submit" class="btn btn-success" onclick="return confirm('Marcar TODAS as ocorrências desta turma?')">
+                    <i class="fas fa-check-double me-2"></i>Marcar todas da turma
+                </button>
+            </form>
+            {% endif %}
+
+            <!-- Tabela -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Data</th>
+                            <th>Turma</th>
+                            <th>Nº</th>
+                            <th>Aluno</th>
+                            <th>Tipo</th>
+                            <th>Busca Ativa</th>
+                            <th>Ações</th>
+                        </thead>
+                    <tbody>
+                        {% for occ in ocorrencias %}
+                        <tr>
+                            <td>{{ occ.data|date:"d/m/Y" }}</td>
+                            <td>{{ occ.aluno.turma.nome }}</td>
+                            <td>{{ occ.aluno.numero }}</td>
+                            <td>{{ occ.aluno.nome }}</td>
+                            <td>
+                                {% if occ.tipo_ocorrencia == 'falta' %}
+                                    ❌ Falta
+                                {% elif occ.tipo_ocorrencia == 'atraso' %}
+                                    ⏰ Atraso
+                                {% elif occ.tipo_ocorrencia == 'piercing' %}
+                                    💍 Piercing
+                                {% elif occ.tipo_ocorrencia == 'cabelo' %}
+                                    💇 Cabelo
+                                {% elif occ.tipo_ocorrencia == 'uniforme' %}
+                                    👕 Uniforme
+                                {% elif occ.tipo_ocorrencia == 'desvio_normas' %}
+                                    ⚠️ Desvio de Normas
+                                {% else %}
+                                    {{ occ.get_tipo_ocorrencia_display }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if occ.busca_ativa_realizada %}
+                                    <span class="badge bg-success">✅ Realizada</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">⏳ Pendente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'editar_ocorrencia_aluno' occ.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                {% if not occ.busca_ativa_realizada %}
+                                    <a href="{% url 'marcar_busca_ativa' occ.id %}" class="btn btn-sm btn-outline-success">Marcar</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">Nenhuma ocorrência registrada.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Ocorrência de Aluno</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #4e73df;
+            color: white;
+        }
+        .aluno-encontrado {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        .aluno-nao-encontrado {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+
+                <!-- Card do Formulário -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-clipboard-list me-2"></i>Registrar Ocorrência de Aluno</h4>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Mensagens -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Formulário -->
+                        <form method="post" id="ocorrenciaForm">
+                            {% csrf_token %}
+
+                            <!-- Linha 1: Turma e Número -->
+                            <div class="row mb-3">
+                                <div class="col-md-5">
+                                    <label class="form-label fw-bold">{{ form.turma.label }}</label>
+                                    {{ form.turma }}
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">{{ form.numero_aluno.label }}</label>
+                                    {{ form.numero_aluno }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">{{ form.nome_aluno.label }}</label>
+                                    {{ form.nome_aluno }}
+                                    <div id="aluno-status" class="mt-2"></div>
+                                </div>
+                            </div>
+                            <!-- Campo de data -->
+                            <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">{{ form.data.label }}</label>
+                                {{ form.data }}
+                            </div>
+                        </div>
+                         <!-- Campo de data -->
+                         <div class="row mb-3">
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-2"></i> Registrar Falta
+                                    </button>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Linha 2: Horário de Chegada, Turno, Tipo de Ocorrência e Atendido por -->
+                            <div class="row mb-3">
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">{{ form.horario_chegada.label }}</label>
+                                    {{ form.horario_chegada }}
+                                </div>
+
+                                <!-- NOVO: TURNO Manhã/Tarde -->
+                                <div class="col-md-2">
+                                    <label class="form-label fw-bold">Turno:</label>
+                                    <div class="mt-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="turno" id="turno_manha" value="manha"
+                                                   {% if form.turno.value == 'manha' %}checked{% endif %}>
+                                            <label class="form-check-label" for="turno_manha">🌅 Manhã</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="turno" id="turno_tarde" value="tarde"
+                                                   {% if form.turno.value == 'tarde' %}checked{% endif %}>
+                                            <label class="form-check-label" for="turno_tarde">🌙 Tarde</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-bold">Tipo de ocorrência:</label>
+                                    <div class="mt-2">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_ocorrencia" id="tipo_falta" value="falta"
+                                                   {% if form.tipo_ocorrencia.value == 'falta' %}checked{% endif %}>
+                                            <label class="form-check-label" for="tipo_falta">❌ Falta</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_ocorrencia" id="tipo_atraso" value="atraso"
+                                                   {% if form.tipo_ocorrencia.value == 'atraso' %}checked{% endif %}>
+                                            <label class="form-check-label" for="tipo_atraso">⏰ Atraso</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_ocorrencia" id="tipo_piercing" value="piercing"
+                                                   {% if form.tipo_ocorrencia.value == 'piercing' %}checked{% endif %}>
+                                            <label class="form-check-label" for="tipo_piercing">💍 Piercing</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_ocorrencia" id="tipo_cabelo" value="cabelo"
+                                                   {% if form.tipo_ocorrencia.value == 'cabelo' %}checked{% endif %}>
+                                            <label class="form-check-label" for="tipo_cabelo">💇 Cabelo</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_ocorrencia" id="tipo_uniforme" value="uniforme"
+                                                   {% if form.tipo_ocorrencia.value == 'uniforme' %}checked{% endif %}>
+                                            <label class="form-check-label" for="tipo_uniforme">👕 Uniforme</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipo_ocorrencia" id="tipo_desvio" value="desvio_normas"
+                                                   {% if form.tipo_ocorrencia.value == 'desvio_normas' %}checked{% endif %}>
+                                            <label class="form-check-label" for="tipo_desvio">⚠️ Desvio de Normas</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label class="form-label fw-bold">{{ form.atendido_por.label }}</label>
+                                    {{ form.atendido_por }}
+                                </div>
+                            </div>
+
+
+                            <!-- Motivo alegado pelo aluno -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">{{ form.motivo_alegado.label }}</label>
+                                {{ form.motivo_alegado }}
+                            </div>
+
+                            <hr>
+                            <h5 class="text-primary">Contato com Responsável</h5>
+
+                            <!-- Linha 3: Responsável e Horário -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">{{ form.responsavel_contatado.label }}</label>
+                                    {{ form.responsavel_contatado }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">{{ form.horario_contato.label }}</label>
+                                    {{ form.horario_contato }}
+                                </div>
+                            </div>
+
+                            <!-- Alegado pelo responsável -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">{{ form.alegado_responsavel.label }}</label>
+                                {{ form.alegado_responsavel }}
+                            </div>
+
+                            <!-- ⬇️⬇️⬇️ ADICIONE O CAMPO ATA AQUI ⬇️⬇️⬇️ -->
+                            <div class="mb-3" id="observacoesContainer" style="display: none;">
+                                <label class="form-label fw-bold">📝 ATA / Descrição Detalhada</label>
+                                <textarea name="observacoes_adicionais" rows="6" class="form-control"
+                                          placeholder="Descreva detalhadamente a ocorrência...
+                            - O que aconteceu?
+                            - Envolvidos?
+                            - Testemunhas?
+                            - Medidas aplicadas?
+                            - Assinaturas?"></textarea>
+                                <small class="text-muted text-danger fw-bold">⚠️ Este campo é obrigatório para Desvio de Normas. Registre todos os detalhes relevantes.</small>
+                            </div>
+
+                            <!-- Botões -->
+                            <div class="mt-4 d-flex justify-content-between">
+                                <div>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save"></i> Registrar Ocorrência
+                                    </button>
+                                    <a href="{% url 'painel_equipe' %}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="{% url 'painel_equipe' %}" class="btn btn-primary">
+                                        <i class="fas fa-arrow-left"></i> Voltar ao Painel
+                                    </a>
+                                </div>
+                            </div>
+
+                <!-- Card com Últimas Ocorrências -->
+                {% if ultimas_ocorrencias %}
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-history me-2"></i>Últimas Ocorrências Registradas</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Aluno</th>
+                                        <th>Atendido por</th>
+                                        <th>Responsável</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for occ in ultimas_ocorrencias %}
+                                    <tr>
+                                        <td>{{ occ.data|date:"d/m/Y" }} {{ occ.horario_chegada|time:"H:i" }}</td>
+                                        <td>{{ occ.aluno.nome }} ({{ occ.aluno.turma.nome }}-{{ occ.aluno.numero }})</td>
+                                        <td>{{ occ.atendido_por }}</td>
+                                        <td>{{ occ.responsavel_contatado }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        // Variáveis
+        var turmaSelect = $('#id_turma');
+        var numeroInput = $('#id_numero_aluno');
+        var nomeInput = $('#id_nome_aluno');
+        var statusDiv = $('#aluno-status');
+
+        // Função para buscar aluno
+        function buscarAluno() {
+            var turmaId = turmaSelect.val();  // agora pega o ID da turma selecionada
+            var numero = numeroInput.val().trim();
+
+            if (turmaId && numero) {
+                $.ajax({
+                    url: '{% url "buscar_aluno_ajax" %}',
+                    data: {
+                        'turma_id': turmaId,  // enviamos o ID, não o nome
+                        'numero': numero
+                    },
+                    success: function(response) {
+                        if (response.encontrado) {
+                            nomeInput.val(response.nome);
+                            statusDiv.html('<div class="aluno-encontrado"><i class="fas fa-check-circle"></i> Aluno encontrado!</div>');
+                        } else {
+                            nomeInput.val('');
+                            statusDiv.html('<div class="aluno-nao-encontrado"><i class="fas fa-exclamation-circle"></i> ' + response.erro + '</div>');
+                        }
+                    },
+                    error: function() {
+                        nomeInput.val('');
+                        statusDiv.html('<div class="aluno-nao-encontrado"><i class="fas fa-exclamation-triangle"></i> Erro na busca</div>');
+                    }
+                });
+            } else {
+                nomeInput.val('');
+                statusDiv.html('');
+            }
+        }
+
+        // Eventos
+        turmaSelect.on('change', buscarAluno);  // mudou para change (select)
+        numeroInput.on('input', buscarAluno);
+
+        // Foco inicial no campo número
+        numeroInput.focus();
+
+        // Submeter com Enter no campo número
+        numeroInput.on('keypress', function(e) {
+            if (e.which === 13) {  // Enter
+                e.preventDefault();
+                $('#ocorrenciaForm').submit();
+            }
+        });
+    });
+</script>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const faltouCheck = document.getElementById('{{ form.faltou.id_for_label }}');
+    const horarioInput = document.getElementById('{{ form.horario_chegada.id_for_label }}');
+    if (faltouCheck && horarioInput) {
+        faltouCheck.addEventListener('change', function() {
+            horarioInput.disabled = this.checked;
+            if (this.checked) horarioInput.value = '';
+        });
+    }
+});
+</script>
+<script>
+// Salva o tipo de ocorrência no localStorage quando o usuário clica
+document.querySelectorAll('input[name="tipo_ocorrencia"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        if (this.checked) {
+            localStorage.setItem('ultimo_tipo_ocorrencia', this.value);
+        }
+    });
+});
+
+// Recupera o tipo salvo no localStorage ao carregar a página
+document.addEventListener('DOMContentLoaded', function() {
+    var tipoSalvo = localStorage.getItem('ultimo_tipo_ocorrencia');
+    if (tipoSalvo) {
+        var radioSelecionado = document.querySelector('input[name="tipo_ocorrencia"][value="' + tipoSalvo + '"]');
+        if (radioSelecionado) {
+            radioSelecionado.checked = true;
+        }
+    }
+});
+</script>
+<script>
+// Controla a exibição do campo ATA baseado no tipo selecionado
+document.addEventListener('DOMContentLoaded', function() {
+    const observacoesContainer = document.getElementById('observacoesContainer');
+
+    function toggleObservacoes() {
+        const tipoSelecionado = document.querySelector('input[name="tipo_ocorrencia"]:checked');
+        if (tipoSelecionado && tipoSelecionado.value === 'desvio_normas') {
+            observacoesContainer.style.display = 'block';
+        } else {
+            observacoesContainer.style.display = 'none';
+        }
+    }
+
+    // Adiciona evento para todos os radios
+    document.querySelectorAll('input[name="tipo_ocorrencia"]').forEach(function(radio) {
+        radio.addEventListener('change', toggleObservacoes);
+    });
+
+    // Executa ao carregar
+    toggleObservacoes();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colégio Cívico Militar Vereador Luiz Zanchim</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            font-weight: 600;
+            border-bottom: none;
+        }
+        .bg-primary { background-color: #0d6efd !important; }
+        .bg-success { background-color: #198754 !important; }
+        .bg-info { background-color: #0dcaf0 !important; }
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+            padding: 0.375rem 1rem;
+        }
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+        footer {
+            background-color: #212529;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- CABEÇALHO COM BOTÃO AZUL -->
+    <div class="bg-dark text-white py-3 shadow-sm">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-shield-alt me-2"></i>Colégio Cívico Militar
+                    </h1>
+                    <h2 class="h5 text-warning mb-0">Vereador Luiz Zanchim</h2>
+                    <span class="badge bg-secondary mt-2">Ensino Fundamental, Médio e Profissionalizante</span>
+                </div>
+
+                <!-- BOTÕES DE AUTENTICAÇÃO - AZUL VISÍVEL -->
+                <div>
+                    {% if user.is_authenticated %}
+                        <span class="text-white me-2">
+                            <i class="fas fa-user-circle"></i> {{ user.get_username }}
+                        </span>
+                        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fas fa-sign-out-alt me-1"></i>Sair
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-sign-in-alt me-1"></i>Entrar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="container my-5">
+        <div class="row g-4">
+
+           <!-- RECADOS FIXADOS -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-bullhorn me-2"></i>📢 Recados Fixados
+                    </div>
+                    <div class="card-body">
+                        {% for recado in recados %}
+                        <div class="mb-2">
+                            <a href="{% url 'detalhe_recado' recado.id %}" class="text-decoration-none d-block p-2 border rounded hover-shadow">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-chevron-circle-right text-primary me-2"></i>
+                                        <strong>{{ recado.titulo }}</strong>
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="far fa-clock me-1"></i>{{ recado.criado_em|date:"d/m/Y" }}
+                                    </small>
+                                </div>
+                            </a>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-center py-3">
+                            <i class="fas fa-bullhorn me-2"></i>Nenhum recado fixado.
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+              <!-- PRÓXIMOS EVENTOS -->
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <i class="fas fa-calendar-alt me-2"></i>📅 Próximos Eventos
+        </div>
+        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+            {% for evento in eventos %}
+            <div class="mb-3">
+                <div class="card h-100 shadow-sm border-0">
+                    {% if evento.imagem %}
+                    <img src="{{ evento.imagem.url }}" class="card-img-top" alt="{{ evento.titulo }}" style="height: 150px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                    {% else %}
+                    <div class="bg-light text-center py-4" style="border-radius: 10px 10px 0 0;">
+                        <i class="fas fa-calendar-alt fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-success">{{ evento.titulo }}</h5>
+                        <p class="card-text small text-muted">
+                            <i class="far fa-calendar me-1"></i>{{ evento.data|date:"d/m/Y H:i" }}<br>
+                            <i class="fas fa-map-marker-alt me-1"></i>{{ evento.local }}
+                        </p>
+                        <a href="{% url 'detalhe_evento' evento.id %}" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-info-circle me-1"></i>Ver detalhes
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted text-center py-3">
+                <i class="fas fa-calendar-alt me-2"></i>Nenhum evento agendado.
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+            <!-- DOCUMENTOS RECENTES -->
+<div class="col-12">
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <i class="fas fa-folder-open me-2"></i>📁 Documentos Recentes
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for documento in documentos %}
+                    <div class="col-md-4 col-sm-6 mb-3">
+                        <div class="p-3 border rounded bg-white h-100">
+                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                            <strong>{{ documento.titulo }}</strong>
+                            <p class="mb-1 small text-muted">{{ documento.categoria }}</p>
+                            <p class="small text-secondary">{{ documento.descricao|truncatewords:8 }}</p>
+                            <a href="{{ documento.arquivo.url }}" class="btn btn-sm btn-outline-primary mt-2" target="_blank">
+                                <i class="fas fa-download me-1"></i>Abrir
+                            </a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Nenhum documento disponível.</p>
+                {% endfor %}
+
+                <!-- BOTÃO DO CRONOGRAMA DE LABORATÓRIOS -->
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="p-3 border rounded bg-white h-100 text-center">
+                        <i class="fas fa-calendar-alt fa-3x text-info mb-3"></i>
+                        <h6>Cronograma de Laboratórios</h6>
+                        <p class="small text-secondary">Agendamento semanal dos laboratórios de informática</p>
+                        <a href="{% url 'cronograma_semanal' %}" class="btn btn-sm btn-outline-info mt-2" target="_blank">
+                            <i class="fas fa-print me-1"></i>Visualizar / Imprimir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+      <!-- VÍDEOS RECENTES -->
+            <div class="col-12 mt-4">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <i class="fas fa-video me-2"></i>📹 Vídeos Recentes
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for video in videos %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 shadow-sm">
+                                    {% if video.thumbnail %}
+                                    <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.titulo }}" style="height: 150px; object-fit: cover; border-radius: 10px 10px 0 0;">
+                                    {% else %}
+                                    <div class="bg-light text-center py-4" style="border-radius: 10px 10px 0 0;">
+                                        <i class="fas fa-video fa-3x text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h5 class="card-title text-danger">{{ video.titulo }}</h5>
+                                        <p class="card-text small text-muted">{{ video.descricao|truncatewords:10 }}</p>
+                                        <a href="{{ video.arquivo.url }}" class="btn btn-sm btn-outline-danger" target="_blank">
+                                            <i class="fas fa-play me-1"></i>Assistir
+                                        </a>
+                                    </div>
+                                    <div class="card-footer text-muted small">
+                                        <i class="fas fa-user me-1"></i>{{ video.criado_por.get_full_name|default:video.criado_por.username }}
+                                        <span class="float-end"><i class="far fa-clock me-1"></i>{{ video.criado_em|date:"d/m/Y" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="col-12 text-center text-muted py-4">
+                                <i class="fas fa-video fa-3x mb-2"></i>
+                                <p>Nenhum vídeo disponível. A equipe diretiva pode enviar vídeos pelo admin.</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    <!-- RODAPÉ COM CRÉDITOS -->
+    <footer class="text-white mt-auto py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    <p class="mb-0">
+                        <i class="fas fa-school me-2"></i>
+                        Colégio Cívico Militar Vereador Luiz Zanchim<br>
+                        <small>Ensino Fundamental, Médio e Profissionalizante</small>
+                    </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <p class="mb-0">
+                        <i class="fas fa-code me-2"></i>
+                        Desenvolvido pelo Prof. Antonio Odair Signorini<br>
+                        <small class="text-warning">com ajuda de IA</small>
+                    </p>
+                </div>
+            </div>
+            <hr class="bg-light my-3">
+            <div class="text-center small">
+                <i class="fas fa-heart text-danger me-1"></i>
+                Sistema de Gestão Escolar - Versão 1.0
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

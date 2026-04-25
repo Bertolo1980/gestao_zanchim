@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Falta - Aluno</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4><i class="fas fa-plus-circle me-2"></i>Registrar Falta de Aluno</h4>
+                    </div>
+                    <div class="card-body">
+                        
+                        <form method="post" class="row g-3">
+                            {% csrf_token %}
+                            
+                            <!-- Selecionar Aluno -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Aluno <span class="text-danger">*</span></label>
+                                <select name="aluno" class="form-control" required>
+                                    <option value="">Selecione um aluno...</option>
+                                    {% for aluno in alunos %}
+                                    <option value="{{ aluno.id }}">
+                                        {{ aluno.turma.nome }} - Nº {{ aluno.numero }} - {{ aluno.nome }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Data -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Data <span class="text-danger">*</span></label>
+                                <input type="date" name="data" class="form-control" required value="{% now 'Y-m-d' %}">
+                            </div>
+
+                            <!-- Quantidade de Faltas -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Quantidade de Faltas</label>
+                                <input type="number" name="quantidade" class="form-control" value="1" min="1" max="10">
+                            </div>
+
+                            <!-- Justificada -->
+                            <div class="col-md-4">
+                                <div class="form-check mt-4">
+                                    <input type="checkbox" name="justificada" class="form-check-input" id="justificada">
+                                    <label class="form-check-label fw-bold" for="justificada">
+                                        Falta justificada?
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Responsável Contatado -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Responsável Contatado</label>
+                                <input type="text" name="responsavel" class="form-control" placeholder="Nome do responsável (opcional)">
+                            </div>
+
+                            <!-- Observações -->
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Observações</label>
+                                <textarea name="observacoes" class="form-control" rows="3" placeholder="Detalhes sobre a falta..."></textarea>
+                            </div>
+
+                            <!-- Botões -->
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save"></i> Salvar Registro
+                                </button>
+                                <a href="{% url 'controle_faltas_alunos' %}" class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

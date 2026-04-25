@@ -1,0 +1,1 @@
+Teste final após correção do BASE_DIR
