@@ -1,6 +1,6 @@
 {% extends 'base_painel.html' %}
 
-{% block title %}Colégio Cívico Militar Vereador Luiz Zanchim{% endblock %}
+{% block title %}Início{% endblock %}
 
 {% block extra_head %}
 <!-- Bootstrap 5 -->
@@ -39,47 +39,10 @@
             background-color: #dc3545;
             border: none;
         }
-        footer {
-            background-color: #212529;
-        }
     </style>
 {% endblock %}
 
 {% block content %}
-<!-- CABEÇALHO COM BOTÃO AZUL -->
-    <div class="bg-dark text-white py-3 shadow-sm">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="h3 mb-0">
-                        <i class="fas fa-shield-alt me-2"></i>Colégio Cívico Militar
-                    </h1>
-                    <h2 class="h5 text-warning mb-0">Vereador Luiz Zanchim</h2>
-                    <span class="badge bg-secondary mt-2">Ensino Fundamental, Médio e Profissionalizante</span>
-                </div>
-
-                <!-- BOTÕES DE AUTENTICAÇÃO - AZUL VISÍVEL -->
-                <div>
-                    {% if user.is_authenticated %}
-                        <span class="text-white me-2">
-                            <i class="fas fa-user-circle"></i> {{ user.get_username }}
-                        </span>
-                        <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                <i class="fas fa-sign-out-alt me-1"></i>Sair
-                            </button>
-                        </form>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
-                            <i class="fas fa-sign-in-alt me-1"></i>Entrar
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="container my-5">
         <div class="row g-4">
