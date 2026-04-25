@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu de Teste{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-xl-11">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h1 class="h3 mb-1">Menu de Teste</h1>
+                <p class="text-muted mb-0">Acesso rapido as principais rotas do sistema.</p>
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar ao site
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-house me-2"></i>Principal
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'home' %}" class="list-group-item list-group-item-action">Inicio</a>
+                        <a href="{% url 'painel_equipe' %}" class="list-group-item list-group-item-action">Painel da Equipe</a>
+                        <a href="{% url 'formulario_digitador' %}" class="list-group-item list-group-item-action">Formulario do Digitador</a>
+                        <a href="{% url 'historico_acessos' %}" class="list-group-item list-group-item-action">Historico de Acessos</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-user-clock me-2"></i>Faltas
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'controle_faltas' %}" class="list-group-item list-group-item-action">Controle de Faltas - Professores</a>
+                        <a href="{% url 'registrar_falta' %}" class="list-group-item list-group-item-action">Registrar Falta de Professor</a>
+                        <a href="{% url 'controle_faltas_alunos' %}" class="list-group-item list-group-item-action">Controle de Faltas - Alunos</a>
+                        <a href="{% url 'registrar_falta_aluno' %}" class="list-group-item list-group-item-action">Registrar Falta de Aluno</a>
+                        <a href="{% url 'relatorio_faltas' %}" class="list-group-item list-group-item-action">Relatorio de Faltas</a>
+                        <a href="{% url 'relatorio_faltas_por_aluno' %}" class="list-group-item list-group-item-action">Relatorio de Faltas por Aluno</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-clipboard-check me-2"></i>Ocorrencias
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'registrar_ocorrencia_aluno' %}" class="list-group-item list-group-item-action">Registrar Ocorrencia</a>
+                        <a href="{% url 'busca_ativa' %}" class="list-group-item list-group-item-action">Busca Ativa</a>
+                        <a href="{% url 'relatorio_ocorrencias_alunos' %}" class="list-group-item list-group-item-action">Relatorio de Ocorrencias</a>
+                        <a href="{% url 'relatorio_filtro' %}" class="list-group-item list-group-item-action">Filtro de Relatorios</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-info text-dark">
+                        <i class="fas fa-address-book me-2"></i>Cadastros
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'cadastrar_professor' %}" class="list-group-item list-group-item-action">Cadastrar Professor</a>
+                        <a href="{% url 'listar_professores' %}" class="list-group-item list-group-item-action">Listar Professores</a>
+                        <a href="{% url 'cadastrar_aluno' %}" class="list-group-item list-group-item-action">Cadastrar Aluno</a>
+                        <a href="{% url 'listar_alunos' %}" class="list-group-item list-group-item-action">Listar Alunos</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="fas fa-laptop me-2"></i>Laboratorios
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'listar_laboratorios' %}" class="list-group-item list-group-item-action">Listar Laboratorios</a>
+                        <a href="{% url 'cronograma_semanal' %}" class="list-group-item list-group-item-action">Cronograma Semanal</a>
+                        <a href="{% url 'listar_emprestimos' %}" class="list-group-item list-group-item-action">Emprestimos Ativos</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <i class="fas fa-screwdriver-wrench me-2"></i>Administracao
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">Admin Django</a>
+                        <a href="{% url 'lista_recados_internos' %}" class="list-group-item list-group-item-action">Recados Internos</a>
+                        <a href="{% url 'lista_documentos_privados' %}" class="list-group-item list-group-item-action">Documentos Privados</a>
+                        <a href="{% url 'lista_eventos_privados' %}" class="list-group-item list-group-item-action">Eventos Privados</a>
+                        <a href="{% url 'listar_relatorios_mensais' %}" class="list-group-item list-group-item-action">Relatorios Mensais</a>
+                        <a href="{% url 'limpeza_sistema' %}" class="list-group-item list-group-item-action text-danger">Limpeza do Sistema</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
