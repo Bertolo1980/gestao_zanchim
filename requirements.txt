@@ -1,0 +1,8 @@
+Django==6.0.2
+django-ckeditor
+django-import-export
+openpyxl
+pandas
+Pillow
+twilio
+xlrd

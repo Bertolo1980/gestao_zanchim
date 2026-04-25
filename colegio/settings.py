@@ -24,6 +24,7 @@ ALLOWED_HOSTS = [
     'gestaoluizzanchim.pythonanywhere.com',
     'localhost',
     '127.0.0.1',
+    '192.168.202.20',
 ]
 
 CSRF_TRUSTED_ORIGINS = [

@@ -19,6 +19,11 @@
     </style>
 </head>
 <body>
+    <div class="container mt-3 text-end">
+        <a href="{% url 'menu_teste' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-home me-1"></i>Voltar ao Início
+        </a>
+    </div>
     <div class="container mt-4">
 
         <!-- CABEÇALHO COM BOTÕES NOVOS -->
@@ -47,10 +52,10 @@
 </a>
                <button class="btn btn-success" id="print-page" onclick="window.print()">🖨️ IMPRIMIR</button>
 <button class="btn btn-danger" id="clear-all" onclick="limparTodos()">🗑️ LIMPAR TUDO</button>
-<a href="https://gestaoluizzanchim.pythonanywhere.com/registrar-falta/" class="btn btn-success">
+<a href="{% url 'registrar_falta' %}" class="btn btn-success">
     <i class="fas fa-plus me-2"></i>Novo Registro
 </a>
-<a href="https://gestaoluizzanchim.pythonanywhere.com/painel-equipe/" class="btn btn-secondary">
+<a href="{% url 'painel_equipe' %}" class="btn btn-secondary">
     <i class="fas fa-arrow-left me-2"></i>Voltar ao Painel
 </a>
             </div>
@@ -228,7 +233,7 @@ function aplicarFiltro() {
     function excluirFalta(id, botao) {
         if (!confirm('Excluir este registro permanentemente?')) return;
 
-        fetch(`/excluir-falta/${id}/`, {
+        fetch("{% url 'excluir_falta' 0 %}".replace('/0/', `/${id}/`), {
             method: 'POST',
             headers: { 'X-CSRFToken': csrftoken },
         })
@@ -261,7 +266,7 @@ function aplicarFiltro() {
         const formData = new FormData();
         ids.forEach(id => formData.append('ids', id));
 
-        fetch('/excluir-faltas-selecionadas/', {
+        fetch("{% url 'excluir_faltas_selecionadas' %}", {
             method: 'POST',
             headers: { 'X-CSRFToken': csrftoken },
             body: formData,
@@ -284,7 +289,7 @@ function aplicarFiltro() {
     function limparTodos() {
         if (!confirm('LIMPAR TODOS os registros permanentemente?')) return;
 
-        fetch('/excluir-faltas-selecionadas/', {
+        fetch("{% url 'excluir_faltas_selecionadas' %}", {
             method: 'POST',
             headers: { 'X-CSRFToken': csrftoken },
             body: new URLSearchParams({ 'todos': 'true' }),
@@ -305,7 +310,7 @@ function aplicarFiltro() {
 
     // ===== EDIÇÃO =====
     function editarFalta(id) {
-        window.location.href = `/editar-falta/${id}/`;
+        window.location.href = "{% url 'editar_falta' 0 %}".replace('/0/', `/${id}/`);
     }
 </script>
 </body>

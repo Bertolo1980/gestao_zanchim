@@ -110,7 +110,7 @@
 
                         <!-- 🔧 BOTÃO MARCAR BUSCA ATIVA REALIZADA (Caminho Direto) -->
                     {% if not ocorrencia.busca_ativa_realizada %}
-                        <a href="/marcar-busca-ativa/{{ ocorrencia.id }}/"
+                        <a href="{% url 'marcar_busca_ativa' ocorrencia.id %}"
                            class="btn btn-warning"
                            onclick="return confirm('Marcar busca ativa como REALIZADA para {{ ocorrencia.aluno.nome }}?')">
                             <i class="fas fa-check-circle me-2"></i> Marcar Busca Ativa Realizada

@@ -63,6 +63,11 @@
     </style>
 </head>
 <body>
+    <div class="container-fluid mt-3 text-end">
+        <a href="{% url 'menu_teste' %}" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-home me-1"></i>Voltar ao Início
+        </a>
+    </div>
     <div class="container-fluid">
         <div class="row">
             <!-- MENU LATERAL -->
@@ -88,16 +93,16 @@
                     </a>
 
                     <!-- LINKS EXISTENTES -->
-                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/recado/" target="_blank">
+                    <a href="{% url 'admin:apps_recado_changelist' %}" target="_blank">
                         <i class="fas fa-bullhorn"></i> Recados Públicos
                     </a>
-                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/documento/" target="_blank">
+                    <a href="{% url 'admin:apps_documento_changelist' %}" target="_blank">
                         <i class="fas fa-file-pdf"></i> Documentos Públicos
                     </a>
-                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/evento/" target="_blank">
+                    <a href="{% url 'admin:apps_evento_changelist' %}" target="_blank">
                         <i class="fas fa-calendar-alt"></i> Eventos Públicos
                     </a>
-                    <a href="https://gestaoluizzanchim.pythonanywhere.com/admin/apps/video/" target="_blank">
+                    <a href="{% url 'admin:apps_video_changelist' %}" target="_blank">
                         <i class="fas fa-video"></i> Vídeos Públicos
                     </a>
                 </div>
@@ -131,12 +136,12 @@
                         </a>
 
                         <!-- Controle de Faltas - Professores -->
-                        <a href="/controle-faltas/">
+                        <a href="{% url 'controle_faltas' %}">
                             <i class="fas fa-user-clock"></i> Controle de Faltas - Professores
                         </a>
 
                         <!-- Controle de Faltas - Alunos -->
-                        <a href="/faltas-alunos/"
+                        <a href="{% url 'controle_faltas_alunos' %}"
                             style="display: block; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; border-left: 3px solid #ffc107; margin-top: 5px; background: rgba(255,255,255,0.1); border-radius: 5px;">
                             <i class="fas fa-user-graduate" style="color: #ffc107; margin-right: 10px; width: 25px; text-align: center;"></i>
                             Controle de Faltas - Alunos

@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+.python-version
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+*.sqlite3
+media/
+static/
+
+# Collected/uploaded project artifacts
+colegio/media/
+colegio/static/
+projeto_completo.zip
+*.zip
+
+# Local/editor files
+.python_history
+.pythonstartup.py
+.ipython/
+.vimrc
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment/secrets
+.env
+.env.*
+!.env.example
