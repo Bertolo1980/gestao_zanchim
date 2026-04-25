@@ -11,7 +11,7 @@ from apps import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),  # <-- URL personalizada
-    path('accounts/logout/', LogoutView.as_view(), name='logout'),          # <-- URL personalizada
+    path('accounts/logout/', LogoutView.as_view(http_method_names=['post', 'options']), name='logout'),          # <-- URL personalizada
     path('painel-equipe/', views.painel_equipe, name='painel_equipe'),
     path('relatorio-faltas/', views.relatorio_faltas, name='relatorio_faltas'),
     path('upload-documento-privado/', views.upload_documento_privado, name='upload_documento_privado'),

@@ -20,11 +20,19 @@ SECRET_KEY = 'django-insecure-mxntg-(z5@zzn81h3wpe#(^@*m%ek842k0ai&(ft80j-f6ufr&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['gestaoluizzanchim.pythonanywhere.com']
+ALLOWED_HOSTS = [
+    'gestaoluizzanchim.pythonanywhere.com',
+    'localhost',
+    '127.0.0.1',
+]
 
-DEBUG = False
-
-ALLOWED_HOSTS = ['gestaoluizzanchim.pythonanywhere.com', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = [
+    'https://gestaoluizzanchim.pythonanywhere.com',
+    'http://localhost',
+    'http://localhost:8000',
+    'http://127.0.0.1',
+    'http://127.0.0.1:8000',
+]
 
 
 # Application definition
@@ -129,6 +137,23 @@ LOGIN_REDIRECT_URL = '/painel-equipe/'
 LOGOUT_REDIRECT_URL = '/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# Basic security settings
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
+
+USE_HTTPS_SECURITY = os.environ.get('DJANGO_USE_HTTPS_SECURITY', 'False').lower() == 'true'
+SECURE_SSL_REDIRECT = USE_HTTPS_SECURITY
+SESSION_COOKIE_SECURE = USE_HTTPS_SECURITY
+CSRF_COOKIE_SECURE = USE_HTTPS_SECURITY
+
+if USE_HTTPS_SECURITY:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
 # ========== CONFIGURAÇÃO DO CKEDITOR ==========
 CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'  # ← ADICIONE ESTA LINHA
 
@@ -146,4 +171,3 @@ TWILIO_API_KEY_SID = 'SKcb87e70dcad7a946a07f5241705ba71e'
 TWILIO_API_KEY_SECRET = 'OIJPYd2lwFlaTBSpRPKwWbfDjBYZyHru'
 TWILIO_WHATSAPP_NUMBER = 'whatsapp:+14155238886'
 
-ALLOWED_HOSTS = ['*']
