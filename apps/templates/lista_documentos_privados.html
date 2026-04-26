@@ -18,9 +18,11 @@
     </a>
     
     <!-- BOTÃO AZUL (ADMIN) -->
+    {% if user.is_superuser %}
     <a href="{% url 'admin:index' %}" style="background-color: #004085; color: white; padding: 12px 30px; text-decoration: none; border-radius: 50px; font-size: 18px; font-weight: bold; display: inline-block; border: 2px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
         🏛️ ADMINISTRAÇÃO DO COLÉGIO
     </a>
+    {% endif %}
     
 </div>
 <!-- =============================== -->

@@ -16,7 +16,16 @@ from io import BytesIO
 from .models import (
     Evento, Documento, Recado, DocumentoPrivado, EventoPrivado, RecadoInterno,
     PeriodoAula, RegistroFalta, Video, Turma, Aluno, RegistroFaltaAluno,
-    RegistroOcorrenciaAluno, LogLogin, Professor  # ← ADICIONE APENAS Professor
+    RegistroOcorrenciaAluno, LogLogin, Professor, DigitadorTurma  # ← ADICIONE APENAS Professor
+)
+from .access_control import (
+    is_equipe_pedagogica,
+    is_aluno_digitador,
+    can_register_professor_falta,
+    can_register_aluno_falta,
+    can_register_ocorrencia,
+    can_consult_alunos,
+    get_login_redirect_url,
 )
 
 from .forms import (
@@ -27,17 +36,9 @@ from .forms import (
 # ===== NOVO IMPORT DO WHATSAPP =====
 from apps.utils import enviar_whatsapp
 
-# Função de teste para verificar se o usuário está no grupo "Equipe Diretiva"
+# Função de teste compatível com o grupo antigo "Equipe Diretiva"
 def pertence_ao_grupo_equipe_diretiva(user):
-    if user.is_authenticated:
-        return user.groups.filter(name__iexact='Equipe Diretiva').exists()
-    return False
-
-# Função de teste para verificar se o usuário está no grupo "Equipe Diretiva"
-def pertence_ao_grupo_equipe_diretiva(user):
-    if user.is_authenticated:
-        return user.groups.filter(name__iexact='Equipe Diretiva').exists()
-    return False
+    return is_equipe_pedagogica(user)
 
 def home(request):
     eventos = Evento.objects.all().order_by('data')[:5]
@@ -348,13 +349,19 @@ def controle_faltas(request):
     return render(request, 'controle_faltas.html', context)
 
 @login_required
-@user_passes_test(pertence_ao_grupo_equipe_diretiva, login_url='/')
+@user_passes_test(can_register_professor_falta, login_url='/')
 def registrar_falta(request):
-    professores = User.objects.filter(groups__name__iexact='Professores')
+    if is_equipe_pedagogica(request.user):
+        professores = User.objects.filter(groups__name__in=['Professor', 'Professores']).distinct()
+    else:
+        professores = User.objects.filter(id=request.user.id)
     if request.method == 'GET':
         return render(request, 'registrar_falta.html', {'professores': professores})
     if request.method == 'POST':
         professor_id = request.POST.get('professor')
+        if not is_equipe_pedagogica(request.user) and str(request.user.id) != str(professor_id):
+            messages.error(request, 'Acesso negado para registrar falta de outro professor.')
+            return redirect('registrar_falta')
         data = request.POST.get('data')
         horario_previsto = request.POST.get('horario_previsto')
         horario_real = request.POST.get('horario_real') or None
@@ -676,90 +683,21 @@ def exportar_relatorio_faltas(request):
 
 # ===== FUNÇÕES PARA DIGITADORES =====
 def grupo_digitadores(user):
-    """Verifica se o usuário pertence ao grupo Digitadores"""
-    return user.groups.filter(name='Digitadores').exists()
+    """Verifica se o usuário pertence a um grupo de aluno digitador."""
+    return is_aluno_digitador(user)
+
+
+def get_turma_digitador(user):
+    if not is_aluno_digitador(user):
+        return None
+    vinculo = DigitadorTurma.objects.filter(usuario=user, ativo=True).select_related('turma').first()
+    return vinculo.turma if vinculo else None
 
 @login_required
 @user_passes_test(grupo_digitadores, login_url='/')
 def formulario_digitador(request):
-    """View exclusiva para digitadores (apenas o formulário de ocorrências)"""
-    # Recupera última data da sessão
-    ultima_data_str = request.session.get('ultima_data_ocorrencia')
-    if ultima_data_str:
-        try:
-            ultima_data = datetime.strptime(ultima_data_str, '%Y-%m-%d').date()
-        except ValueError:
-            ultima_data = timezone.now().date()
-    else:
-        ultima_data = timezone.now().date()
-
-    # Recupera última turma da sessão
-    ultima_turma_id = request.session.get('ultima_turma_ocorrencia_id')
-    ultima_turma = None
-    if ultima_turma_id:
-        try:
-            ultima_turma = Turma.objects.get(id=ultima_turma_id)
-        except Turma.DoesNotExist:
-            ultima_turma = None
-
-    if request.method == 'POST':
-        form = RegistroOcorrenciaForm(request.POST)
-        if form.is_valid():
-            turma = form.cleaned_data['turma']
-            numero = form.cleaned_data['numero_aluno']
-
-            aluno = Aluno.objects.filter(turma=turma, numero=numero).first()
-            if not aluno:
-                messages.error(request, f'Aluno número {numero} não encontrado na turma {turma.nome}!')
-                return render(request, 'formulario_digitador.html', {
-                    'form': form,
-                    'ultimas_ocorrencias': RegistroOcorrenciaAluno.objects.select_related('aluno', 'aluno__turma').order_by('-data', '-horario_chegada')[:10]
-                })
-
-            ocorrencia = form.save(commit=False)
-
-            # 🔧 CORREÇÃO 1: Pega o tipo de ocorrência do formulário
-            tipo_ocorrencia = form.cleaned_data.get('tipo_ocorrencia')
-            if tipo_ocorrencia == 'falta':
-                ocorrencia.faltou = True
-            else:
-                ocorrencia.faltou = False
-
-            # 🔧 CORREÇÃO 2: Pega o turno do formulário
-            ocorrencia.turno = form.cleaned_data.get('turno', 'manha')
-
-            if ocorrencia.horario_chegada == '':
-                ocorrencia.horario_chegada = None
-            if ocorrencia.horario_contato == '':
-                ocorrencia.horario_contato = None
-
-            ocorrencia.aluno = aluno
-            ocorrencia.registrado_por = request.user
-            ocorrencia.save()
-
-            request.session['ultima_data_ocorrencia'] = ocorrencia.data.isoformat()
-            request.session['ultima_turma_ocorrencia_id'] = turma.id
-            request.session['ultima_turma_ocorrencia_nome'] = turma.nome
-
-            messages.success(request, f'Ocorrência registrada para {aluno.nome} (Turma {turma.nome}, Nº {numero})')
-            return redirect('formulario_digitador')
-        else:
-            messages.error(request, 'Erro no formulário. Verifique os dados.')
-    else:
-        initial_data = {
-            'data': ultima_data.isoformat(),
-            'faltou': True,
-        }
-        form = RegistroOcorrenciaForm(initial=initial_data)
-        if ultima_turma:
-            form.fields['turma'].initial = ultima_turma
-
-    ultimas_ocorrencias = RegistroOcorrenciaAluno.objects.select_related('aluno', 'aluno__turma').order_by('-data', '-horario_chegada')[:10]
-
-    return render(request, 'formulario_digitador.html', {
-        'form': form,
-        'ultimas_ocorrencias': ultimas_ocorrencias
-    })
+    """Rota mantida para compatibilidade; digitador registra somente falta de aluno."""
+    return redirect('registrar_falta_aluno')
 # ===== REDIRECIONAMENTO PERSONALIZADO PARA LOGIN =====
 from django.contrib.auth.views import LoginView
 
@@ -775,9 +713,7 @@ class CustomLoginView(LoginView):
             user_agent=self.request.META.get('HTTP_USER_AGENT', '')
         )
 
-        if user.groups.filter(name='Digitadores').exists():
-            return '/ocorrencias/registrar/'
-        return '/painel-equipe/'
+        return get_login_redirect_url(user)
 
 
 @login_required
@@ -1135,8 +1071,13 @@ def controle_faltas_alunos_antigo(request):
     return render(request, 'controle_faltas_alunos.html', context)
 
 @login_required
-@user_passes_test(pertence_ao_grupo_equipe_diretiva, login_url='/')
+@user_passes_test(can_register_aluno_falta, login_url='/')
 def registrar_falta_aluno(request):
+    turma_digitador = get_turma_digitador(request.user)
+    if is_aluno_digitador(request.user) and not turma_digitador:
+        messages.error(request, 'Seu usuário digitador ainda não está vinculado a uma turma.')
+        return redirect('home')
+
     if request.method == 'POST':
         aluno_id = request.POST.get('aluno')
         data = request.POST.get('data')
@@ -1147,6 +1088,9 @@ def registrar_falta_aluno(request):
 
         try:
             aluno = Aluno.objects.get(id=aluno_id)
+            if turma_digitador and aluno.turma_id != turma_digitador.id:
+                messages.error(request, 'Acesso negado. Você só pode registrar faltas da sua turma.')
+                return redirect('registrar_falta_aluno')
             RegistroFaltaAluno.objects.create(
                 aluno=aluno,
                 data=data,
@@ -1160,11 +1104,18 @@ def registrar_falta_aluno(request):
         except Exception as e:
             messages.error(request, f'Erro: {str(e)}')
 
-        return redirect('controle_faltas_alunos_antigo')
+        if is_aluno_digitador(request.user):
+            return redirect('registrar_falta_aluno')
+        return redirect('controle_faltas_alunos')
 
     # GET - exibe formulário
     alunos = Aluno.objects.filter(ativo=True).select_related('turma')
-    return render(request, 'registrar_falta_aluno.html', {'alunos': alunos})
+    if turma_digitador:
+        alunos = alunos.filter(turma=turma_digitador)
+    return render(request, 'registrar_falta_aluno.html', {
+        'alunos': alunos,
+        'turma_digitador': turma_digitador,
+    })
 
 @login_required
 @user_passes_test(pertence_ao_grupo_equipe_diretiva, login_url='/')
@@ -1179,7 +1130,7 @@ def editar_falta_aluno(request, falta_id):
         falta.save()
 
         messages.success(request, 'Registro atualizado!')
-        return redirect('controle_faltas_alunos_antigo')
+        return redirect('controle_faltas_alunos')
 
     return render(request, 'editar_falta_aluno.html', {'falta': falta})
 
@@ -1189,7 +1140,7 @@ def excluir_falta_aluno(request, falta_id):
     falta = get_object_or_404(RegistroFaltaAluno, id=falta_id)
     falta.delete()
     messages.success(request, 'Registro excluído!')
-    return redirect('controle_faltas_alunos_antigo')
+    return redirect('controle_faltas_alunos')
 
 # =============================================================================
 # IMPORTAÇÃO DE ALUNOS VIA EXCEL
@@ -1257,10 +1208,10 @@ from calendar import monthrange
 def pertence_ao_grupo_equipe_ou_digitadores(user):
     if not user.is_authenticated:
         return False
-    return user.groups.filter(name__in=['Equipe Diretiva', 'Digitadores']).exists()
+    return can_register_ocorrencia(user)
 
 @login_required
-@user_passes_test(pertence_ao_grupo_equipe_ou_digitadores, login_url='/')  # ← CORRETO (novo)
+@user_passes_test(can_register_ocorrencia, login_url='/')
 def registrar_ocorrencia_aluno(request):
     # Recupera última data da sessão
     ultima_data_str = request.session.get('ultima_data_ocorrencia')
@@ -1363,6 +1314,8 @@ Para mais detalhes, entre em contato com a Equipe Pedagógica."""
         'ultimas_ocorrencias': ultimas_ocorrencias
     })
 
+@login_required
+@user_passes_test(can_consult_alunos, login_url='/')
 def buscar_aluno_ajax(request):
     turma_id = request.GET.get('turma_id')
     numero = request.GET.get('numero', '')
@@ -1830,7 +1783,7 @@ def editar_professor(request, professor_id):
 
 
 @login_required
-@user_passes_test(pertence_ao_grupo_equipe_diretiva, login_url='/')
+@user_passes_test(can_consult_alunos, login_url='/')
 def listar_alunos(request):
     alunos = Aluno.objects.all().order_by('turma', 'numero')
     return render(request, 'listar_alunos.html', {'alunos': alunos})

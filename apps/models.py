@@ -309,6 +309,30 @@ class Turma(models.Model):
         return f"{self.serie} - {self.nome}"
 
 
+class DigitadorTurma(models.Model):
+    usuario = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='turma_digitador',
+        verbose_name='Usuário digitador'
+    )
+    turma = models.ForeignKey(
+        Turma,
+        on_delete=models.PROTECT,
+        related_name='digitadores',
+        verbose_name='Turma'
+    )
+    ativo = models.BooleanField(default=True, verbose_name='Ativo')
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Vínculo de digitador com turma'
+        verbose_name_plural = 'Vínculos de digitadores com turmas'
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.turma.nome}"
+
+
 class Aluno(models.Model):
     """Alunos da escola"""
     nome = models.CharField(max_length=100)

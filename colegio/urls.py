@@ -6,13 +6,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView  # <-- IMPORTANTE: coloque aqui no topo
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from apps import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),  # <-- URL personalizada
-    path('accounts/logout/', LogoutView.as_view(http_method_names=['post', 'options']), name='logout'),          # <-- URL personalizada
+    path('accounts/logout/', LogoutView.as_view(http_method_names=['post', 'options'], next_page='login'), name='logout'),          # <-- URL personalizada
     path('painel-equipe/', views.painel_equipe, name='painel_equipe'),
     path('relatorio-faltas/', views.relatorio_faltas, name='relatorio_faltas'),
     path('upload-documento-privado/', views.upload_documento_privado, name='upload_documento_privado'),
@@ -54,7 +55,7 @@ urlpatterns = [
 
      # ===== BUSCA ATIVA =====
     path('busca-ativa/', views.busca_ativa, name='busca_ativa'),
-    path('inicio/', lambda request: render(request, 'menu_teste.html'), name='menu_teste'),
+    path('inicio/', login_required(lambda request: render(request, 'menu_teste.html')), name='menu_teste'),
     path('marcar-busca-ativa/<int:pk>/', views.marcar_busca_ativa, name='marcar_busca_ativa'),
     path('marcar-todos-busca-ativa/', views.marcar_todos_busca_ativa, name='marcar_todos_busca_ativa'),
 

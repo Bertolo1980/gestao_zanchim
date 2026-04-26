@@ -7,7 +7,7 @@
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <h1 class="h3 mb-1">Início do Sistema</h1>
-                <p class="text-muted mb-0">Acesso rápido às principais rotas do sistema.</p>
+                <p class="text-muted mb-0">Acesso rápido às principais rotas permitidas para seu perfil.</p>
             </div>
             <a href="{% url 'home' %}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i>Voltar ao site
@@ -22,57 +22,88 @@
                     </div>
                     <div class="list-group list-group-flush">
                         <a href="{% url 'home' %}" class="list-group-item list-group-item-action">Início</a>
-                        <a href="{% url 'painel_equipe' %}" class="list-group-item list-group-item-action">Painel da Equipe</a>
-                        <a href="{% url 'formulario_digitador' %}" class="list-group-item list-group-item-action">Formulário do Digitador</a>
-                        <a href="{% url 'historico_acessos' %}" class="list-group-item list-group-item-action">Histórico de Acessos</a>
+                        {% if pode_acessar_painel %}
+                            <a href="{% url 'painel_equipe' %}" class="list-group-item list-group-item-action">Painel da Equipe</a>
+                        {% endif %}
+                        {% if acesso_aluno_digitador %}
+                            <a href="{% url 'formulario_digitador' %}" class="list-group-item list-group-item-action">Área do Digitador</a>
+                        {% endif %}
+                        {% if user.is_superuser %}
+                            <a href="{% url 'historico_acessos' %}" class="list-group-item list-group-item-action">Histórico de Acessos</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
+            {% if pode_gerenciar_faltas_ocorrencias_relatorios or pode_registrar_falta_professor or pode_registrar_falta_aluno %}
             <div class="col-12 col-lg-6">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-warning text-dark">
                         <i class="fas fa-user-clock me-2"></i>Faltas
                     </div>
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'controle_faltas' %}" class="list-group-item list-group-item-action">Controle de Faltas - Professores</a>
-                        <a href="{% url 'registrar_falta' %}" class="list-group-item list-group-item-action">Registrar Falta de Professor</a>
-                        <a href="{% url 'controle_faltas_alunos' %}" class="list-group-item list-group-item-action">Controle de Faltas - Alunos</a>
-                        <a href="{% url 'registrar_falta_aluno' %}" class="list-group-item list-group-item-action">Registrar Falta de Aluno</a>
-                        <a href="{% url 'relatorio_faltas' %}" class="list-group-item list-group-item-action">Relatório de Faltas</a>
-                        <a href="{% url 'relatorio_faltas_por_aluno' %}" class="list-group-item list-group-item-action">Relatório de Faltas por Aluno</a>
+                        {% if pode_gerenciar_faltas_ocorrencias_relatorios %}
+                            <a href="{% url 'controle_faltas' %}" class="list-group-item list-group-item-action">Controle de Faltas - Professores</a>
+                        {% endif %}
+                        {% if pode_registrar_falta_professor %}
+                            <a href="{% url 'registrar_falta' %}" class="list-group-item list-group-item-action">Registrar Falta de Professor</a>
+                        {% endif %}
+                        {% if pode_gerenciar_faltas_ocorrencias_relatorios %}
+                            <a href="{% url 'controle_faltas_alunos' %}" class="list-group-item list-group-item-action">Controle de Faltas - Alunos</a>
+                        {% endif %}
+                        {% if pode_registrar_falta_aluno %}
+                            <a href="{% url 'registrar_falta_aluno' %}" class="list-group-item list-group-item-action">Registrar Falta de Aluno</a>
+                        {% endif %}
+                        {% if pode_gerenciar_faltas_ocorrencias_relatorios %}
+                            <a href="{% url 'relatorio_faltas' %}" class="list-group-item list-group-item-action">Relatório de Faltas</a>
+                            <a href="{% url 'relatorio_faltas_por_aluno' %}" class="list-group-item list-group-item-action">Relatório de Faltas por Aluno</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+            {% endif %}
 
+            {% if pode_gerenciar_faltas_ocorrencias_relatorios or pode_registrar_ocorrencia %}
             <div class="col-12 col-lg-6">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-success text-white">
                         <i class="fas fa-clipboard-check me-2"></i>Ocorrências
                     </div>
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'registrar_ocorrencia_aluno' %}" class="list-group-item list-group-item-action">Registrar Ocorrência</a>
-                        <a href="{% url 'busca_ativa' %}" class="list-group-item list-group-item-action">Busca Ativa</a>
-                        <a href="{% url 'relatorio_ocorrencias_alunos' %}" class="list-group-item list-group-item-action">Relatório de Ocorrências</a>
-                        <a href="{% url 'relatorio_filtro' %}" class="list-group-item list-group-item-action">Filtro de Relatórios</a>
+                        {% if pode_registrar_ocorrencia %}
+                            <a href="{% url 'registrar_ocorrencia_aluno' %}" class="list-group-item list-group-item-action">Registrar Ocorrência</a>
+                        {% endif %}
+                        {% if pode_gerenciar_faltas_ocorrencias_relatorios %}
+                            <a href="{% url 'busca_ativa' %}" class="list-group-item list-group-item-action">Busca Ativa</a>
+                            <a href="{% url 'relatorio_ocorrencias_alunos' %}" class="list-group-item list-group-item-action">Relatório de Ocorrências</a>
+                            <a href="{% url 'relatorio_filtro' %}" class="list-group-item list-group-item-action">Filtro de Relatórios</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+            {% endif %}
 
+            {% if pode_gerenciar_faltas_ocorrencias_relatorios or pode_consultar_alunos %}
             <div class="col-12 col-lg-6">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-info text-dark">
-                        <i class="fas fa-address-book me-2"></i>Cadastros
+                        <i class="fas fa-address-book me-2"></i>Cadastros e consultas
                     </div>
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'cadastrar_professor' %}" class="list-group-item list-group-item-action">Cadastrar Professor</a>
-                        <a href="{% url 'listar_professores' %}" class="list-group-item list-group-item-action">Listar Professores</a>
-                        <a href="{% url 'cadastrar_aluno' %}" class="list-group-item list-group-item-action">Cadastrar Aluno</a>
-                        <a href="{% url 'listar_alunos' %}" class="list-group-item list-group-item-action">Listar Alunos</a>
+                        {% if pode_gerenciar_faltas_ocorrencias_relatorios %}
+                            <a href="{% url 'cadastrar_professor' %}" class="list-group-item list-group-item-action">Cadastrar Professor</a>
+                            <a href="{% url 'listar_professores' %}" class="list-group-item list-group-item-action">Listar Professores</a>
+                            <a href="{% url 'cadastrar_aluno' %}" class="list-group-item list-group-item-action">Cadastrar Aluno</a>
+                        {% endif %}
+                        {% if pode_consultar_alunos %}
+                            <a href="{% url 'listar_alunos' %}" class="list-group-item list-group-item-action">Listar Alunos</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+            {% endif %}
 
+            {% if pode_gerenciar_faltas_ocorrencias_relatorios %}
             <div class="col-12 col-lg-6">
                 <div class="card h-100 shadow-sm">
                     <div class="card-header bg-secondary text-white">
@@ -92,15 +123,20 @@
                         <i class="fas fa-screwdriver-wrench me-2"></i>Administração
                     </div>
                     <div class="list-group list-group-flush">
-                        <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">Admin Django</a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'admin:index' %}" class="list-group-item list-group-item-action">Admin Django</a>
+                        {% endif %}
                         <a href="{% url 'lista_recados_internos' %}" class="list-group-item list-group-item-action">Recados Internos</a>
                         <a href="{% url 'lista_documentos_privados' %}" class="list-group-item list-group-item-action">Documentos Privados</a>
                         <a href="{% url 'lista_eventos_privados' %}" class="list-group-item list-group-item-action">Eventos Privados</a>
                         <a href="{% url 'listar_relatorios_mensais' %}" class="list-group-item list-group-item-action">Relatórios Mensais</a>
-                        <a href="{% url 'limpeza_sistema' %}" class="list-group-item list-group-item-action text-danger">Limpeza do Sistema</a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'limpeza_sistema' %}" class="list-group-item list-group-item-action text-danger">Limpeza do Sistema</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>

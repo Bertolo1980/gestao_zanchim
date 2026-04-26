@@ -102,18 +102,20 @@
                         <a href="{% url 'home' %}" target="_blank">
                             <i class="fas fa-globe"></i> Ir para o Site dos Professores
                         </a>
-                        <a href="{% url 'admin:apps_recado_changelist' %}" target="_blank">
-                            <i class="fas fa-bullhorn"></i> Recados Públicos
-                        </a>
-                        <a href="{% url 'admin:apps_documento_changelist' %}" target="_blank">
-                            <i class="fas fa-file-pdf"></i> Documentos Públicos
-                        </a>
-                        <a href="{% url 'admin:apps_evento_changelist' %}" target="_blank">
-                            <i class="fas fa-calendar-alt"></i> Eventos Públicos
-                        </a>
-                        <a href="{% url 'admin:apps_video_changelist' %}" target="_blank">
-                            <i class="fas fa-video"></i> Vídeos Públicos
-                        </a>
+                        {% if user.is_superuser %}
+                            <a href="{% url 'admin:apps_recado_changelist' %}" target="_blank">
+                                <i class="fas fa-bullhorn"></i> Recados Públicos
+                            </a>
+                            <a href="{% url 'admin:apps_documento_changelist' %}" target="_blank">
+                                <i class="fas fa-file-pdf"></i> Documentos Públicos
+                            </a>
+                            <a href="{% url 'admin:apps_evento_changelist' %}" target="_blank">
+                                <i class="fas fa-calendar-alt"></i> Eventos Públicos
+                            </a>
+                            <a href="{% url 'admin:apps_video_changelist' %}" target="_blank">
+                                <i class="fas fa-video"></i> Vídeos Públicos
+                            </a>
+                        {% endif %}
                     </div>
 
                     <div class="menu-secao">

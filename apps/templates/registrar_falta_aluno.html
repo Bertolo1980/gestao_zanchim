@@ -24,6 +24,11 @@
                         <h4><i class="fas fa-plus-circle me-2"></i>Registrar Falta de Aluno</h4>
                     </div>
                     <div class="card-body">
+                        {% if turma_digitador %}
+                            <div class="alert alert-info">
+                                Registrando faltas somente para a turma {{ turma_digitador.nome }}.
+                            </div>
+                        {% endif %}
                         
                         <form method="post" class="row g-3">
                             {% csrf_token %}
@@ -37,6 +42,8 @@
                                     <option value="{{ aluno.id }}">
                                         {{ aluno.turma.nome }} - Nº {{ aluno.numero }} - {{ aluno.nome }}
                                     </option>
+                                    {% empty %}
+                                    <option value="">Nenhum aluno disponível para este usuário.</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -80,9 +87,15 @@
                                 <button type="submit" class="btn btn-success">
                                     <i class="fas fa-save"></i> Salvar Registro
                                 </button>
-                                <a href="{% url 'controle_faltas_alunos' %}" class="btn btn-secondary">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </a>
+                                {% if acesso_aluno_digitador %}
+                                    <a href="{% url 'menu_teste' %}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'controle_faltas_alunos' %}" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
+                                {% endif %}
                             </div>
                         </form>
 

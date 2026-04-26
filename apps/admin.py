@@ -4,6 +4,13 @@ from django.contrib.admin import SimpleListFilter
 from .models import Evento, Documento, Recado, DocumentoPrivado, EventoPrivado, RecadoInterno, PeriodoAula, RegistroFalta
 from ckeditor.widgets import CKEditorWidget
 
+def admin_superuser_has_permission(request):
+    return request.user.is_active and request.user.is_superuser
+
+
+admin.site.has_permission = admin_superuser_has_permission
+
+
 # ===== EVENTOS PÚBLICOS COM CKEDITOR =====
 class EventoAdminForm(forms.ModelForm):
     descricao = forms.CharField(widget=CKEditorWidget())
@@ -73,7 +80,7 @@ admin.site.register(Video)
 from .models import RegistroPonto
 
 # ===== CONTROLE DE FALTAS - ALUNOS =====
-from .models import Turma, Aluno, RegistroFaltaAluno
+from .models import Turma, Aluno, RegistroFaltaAluno, DigitadorTurma
 
 # ===== FILTRO PERSONALIZADO PARA TELEFONE =====
 class TelefoneFilter(SimpleListFilter):
@@ -106,6 +113,13 @@ class AlunoAdmin(admin.ModelAdmin):
     list_filter = ['turma', 'ativo', TelefoneFilter]
     search_fields = ['nome', 'numero']
     list_editable = ['ativo']
+
+
+@admin.register(DigitadorTurma)
+class DigitadorTurmaAdmin(admin.ModelAdmin):
+    list_display = ['usuario', 'turma', 'ativo', 'criado_em']
+    list_filter = ['ativo', 'turma']
+    search_fields = ['usuario__username', 'usuario__first_name', 'usuario__last_name', 'turma__nome']
 
 @admin.register(RegistroFaltaAluno)
 class RegistroFaltaAlunoAdmin(admin.ModelAdmin):
