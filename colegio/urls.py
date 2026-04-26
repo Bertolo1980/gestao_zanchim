@@ -88,8 +88,7 @@ urlpatterns = [
     path('', views.home, name='home'),
 ]
 
-# Configuração para arquivos de mídia
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# Configuração para arquivos estáticos
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Configuração para arquivos de mídia e estáticos em desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
