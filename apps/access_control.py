@@ -17,6 +17,14 @@ def user_in_groups(user, names):
     return user.groups.filter(name__in=names).exists()
 
 
+def user_in_groups_normalized(user, names):
+    if not user.is_authenticated:
+        return False
+    normalized_names = {(name or '').strip().casefold() for name in names}
+    user_group_names = user.groups.values_list('name', flat=True)
+    return any((name or '').strip().casefold() in normalized_names for name in user_group_names)
+
+
 def is_administrador(user):
     return user.is_authenticated and (user.is_superuser or user_in_groups(user, ADMIN_GROUPS))
 
@@ -26,7 +34,7 @@ def is_equipe_pedagogica(user):
 
 
 def is_professor(user):
-    return is_administrador(user) or user_in_groups(user, PROFESSOR_GROUPS)
+    return is_administrador(user) or user_in_groups_normalized(user, PROFESSOR_GROUPS)
 
 
 def is_aluno_digitador(user):
