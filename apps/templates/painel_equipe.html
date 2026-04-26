@@ -33,6 +33,29 @@
             width: 25px;
             text-align: center;
         }
+        .menu-secao {
+            padding: 0 12px 10px;
+        }
+        .menu-titulo {
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+        .menu-publico { background-color: #17a2b8; }
+        .menu-privado { background-color: #dc3545; }
+        .menu-gestao { background-color: #28a745; }
+        .menu-relatorios { background-color: #0d6efd; }
+        .menu-saida a {
+            background-color: #6c757d;
+            color: white;
+            text-align: center;
+        }
         .main-content {
             padding: 20px;
         }
@@ -65,8 +88,106 @@
         <div class="row">
 
 
+            <!-- MENU LATERAL DO PAINEL -->
+            <div class="col-md-3 col-xl-2 p-0 sidebar">
+                <div class="p-4">
+                    <h4 class="text-center mb-4">
+                        <i class="fas fa-shield-alt"></i> Painel da Equipe
+                    </h4>
+                    <hr style="border-color: rgba(255,255,255,0.2);">
+                </div>
+                <nav aria-label="Menu lateral do painel da equipe">
+                    <div class="menu-secao">
+                        <div class="menu-titulo menu-publico">Conteúdo público</div>
+                        <a href="{% url 'home' %}" target="_blank">
+                            <i class="fas fa-globe"></i> Ir para o Site dos Professores
+                        </a>
+                        <a href="{% url 'admin:apps_recado_changelist' %}" target="_blank">
+                            <i class="fas fa-bullhorn"></i> Recados Públicos
+                        </a>
+                        <a href="{% url 'admin:apps_documento_changelist' %}" target="_blank">
+                            <i class="fas fa-file-pdf"></i> Documentos Públicos
+                        </a>
+                        <a href="{% url 'admin:apps_evento_changelist' %}" target="_blank">
+                            <i class="fas fa-calendar-alt"></i> Eventos Públicos
+                        </a>
+                        <a href="{% url 'admin:apps_video_changelist' %}" target="_blank">
+                            <i class="fas fa-video"></i> Vídeos Públicos
+                        </a>
+                    </div>
+
+                    <div class="menu-secao">
+                        <div class="menu-titulo menu-privado">Conteúdo privado</div>
+                        <a href="{% url 'lista_recados_internos' %}">
+                            <i class="fas fa-comments"></i> Recados Internos
+                        </a>
+                        <a href="{% url 'lista_documentos_privados' %}">
+                            <i class="fas fa-file-pdf"></i> Documentos Privados
+                        </a>
+                        <a href="{% url 'lista_eventos_privados' %}">
+                            <i class="fas fa-calendar-check"></i> Eventos Privados
+                        </a>
+                    </div>
+
+                    <div class="menu-secao">
+                        <div class="menu-titulo menu-gestao">Gestão</div>
+                        <a href="{% url 'listar_laboratorios' %}">
+                            <i class="fas fa-laptop"></i> Laboratórios
+                        </a>
+                        <a href="{% url 'controle_faltas' %}">
+                            <i class="fas fa-user-clock"></i> Controle de Faltas - Professores
+                        </a>
+                        <a href="{% url 'controle_faltas_alunos' %}">
+                            <i class="fas fa-user-graduate"></i> Controle de Faltas - Alunos
+                        </a>
+                        <a href="{% url 'busca_ativa' %}">
+                            <i class="fas fa-magnifying-glass"></i> Busca Ativa
+                        </a>
+                        <a href="{% url 'cadastrar_professor' %}">
+                            <i class="fas fa-chalkboard-user"></i> Cadastrar Professor
+                        </a>
+                        <a href="{% url 'listar_professores' %}">
+                            <i class="fas fa-list"></i> Listar Professores
+                        </a>
+                        <a href="{% url 'cadastrar_aluno' %}">
+                            <i class="fas fa-user-plus"></i> Cadastrar Aluno
+                        </a>
+                        <a href="{% url 'listar_alunos' %}">
+                            <i class="fas fa-users"></i> Listar Alunos
+                        </a>
+                    </div>
+
+                    <div class="menu-secao">
+                        <div class="menu-titulo menu-relatorios">Relatórios</div>
+                        <a href="{% url 'relatorio_ocorrencias_alunos' %}?mes={{ mes_atual }}&ano={{ ano_atual }}">
+                            <i class="fas fa-file-excel"></i> Relatório de Faltas - Alunos
+                        </a>
+                        <a href="{% url 'relatorio_faltas' %}">
+                            <i class="fas fa-print"></i> Relatório Individual de Faltas
+                        </a>
+                        <a href="{% url 'relatorio_faltas_por_aluno' %}">
+                            <i class="fas fa-chart-bar"></i> Relatório de Faltas por Aluno
+                        </a>
+                        <a href="{% url 'relatorio_filtro' %}">
+                            <i class="fas fa-filter"></i> Relatório por Tipo de Ocorrência
+                        </a>
+                        {% if user.is_superuser %}
+                        <a href="{% url 'historico_acessos' %}">
+                            <i class="fas fa-history"></i> Histórico de Acessos
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="menu-secao menu-saida">
+                        <a href="{% url 'home' %}">
+                            <i class="fas fa-arrow-left"></i> Voltar ao Site
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
             <!-- CONTEÚDO PRINCIPAL -->
-            <div class="col-12 main-content">
+            <div class="col-md-9 col-xl-10 main-content">
                 <div class="page-header">
                     <h2><i class="fas fa-tachometer-alt me-2"></i>Olá, {{ usuario.get_full_name|default:usuario.username }}!</h2>
                     <span class="user-info">
@@ -122,14 +243,14 @@
                         labels: {{ dias|safe }},
                         datasets: [
                             {
-                                label: '🌅 Manhã - % de faltas',
+                                label: 'Manhã - % de faltas',
                                 data: {{ percentuais_manha|safe }},
                                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                                 borderColor: '#FF6384',
                                 borderWidth: 1
                             },
                             {
-                                label: '🌇 Tarde - % de faltas',
+                                label: 'Tarde - % de faltas',
                                 data: {{ percentuais_tarde|safe }},
                                 backgroundColor: 'rgba(54, 162, 235, 0.5)',
                                 borderColor: '#36A2EB',
